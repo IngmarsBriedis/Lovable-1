@@ -1,0 +1,50 @@
+{
+  "search_criteria": {
+    "keywords": [],
+    "cpv_codes": [],
+    "cpv_descriptions": {
+      "37400000": "Sporta preces un inventārs",
+      "37410000": "Āra sporta inventārs",
+      "37411000": "Ziemas sporta inventārs",
+      "37412000": "Ūdens sporta inventārs",
+      "37413000": "Medību un makšķerēšanas piederumi",
+      "37414000": "Kempinga inventārs",
+      "37415000": "Vieglatlētikas inventārs",
+      "37420000": "Fitnesa inventārs",
+      "37421000": "Trenažieri",
+      "37422000": "Svaru stieņi un hanteles",
+      "37423000": "Svari un atsvari",
+      "37424000": "Sporta medicīnas inventārs",
+      "37430000": "Boksa inventārs",
+      "37440000": "Sporta aizsardzības līdzekļi",
+      "37450000": "Lauka un zāles sporta inventārs",
+      "37451000": "Komandu sporta inventārs",
+      "37452000": "Rakešu sporta inventārs",
+      "37453000": "Galda sporta inventārs",
+      "92600000": "Sporta pakalpojumi",
+      "92610000": "Sporta objektu darbības pakalpojumi",
+      "92620000": "Ar sportu saistīti pakalpojumi",
+      "92621000": "Sporta pasākumu veicināšanas pakalpojumi",
+      "92622000": "Sporta pasākumu organizēšanas pakalpojumi"
+    },
+    "exclude_keywords": [],
+    "contracting_authorities": [
+      "pašvaldīb",
+      "skola",
+      "ģimnāzij",
+      "vidusskol",
+      "pamatskol",
+      "sporta centr",
+      "sporta skol",
+      "sporta pārvald",
+      "izglītības pārvald",
+      "dome"
+    ]
+  },
+  "days_to_check": 7,
+  "check_time": "09:00",
+  "notification_email": "",
+  "save_format": ["json", "txt", "csv"],
+  "min_contract_value": 0,
+  "max_contract_value": 0
+}

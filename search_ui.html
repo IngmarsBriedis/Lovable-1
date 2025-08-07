@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iepirkumu meklētājs</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/lucide-static@0.263.1/lucide.css">
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        
+        // API base URL - mainiet uz savu servera adresi
+        const API_BASE = 'http://127.0.0.1:5050';
+        
+        function ProcurementSearchUI() {
+            const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+            const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+            const [keywords, setKeywords] = useState(['sporta inventārs', 'treniņ']);
+            const [newKeyword, setNewKeyword] = useState('');
+            const [cpvCodes, setCpvCodes] = useState(['37400000']);
+            const [newCpvCode, setNewCpvCode] = useState('');
+            const [excludeKeywords, setExcludeKeywords] = useState(['ēdināšan']);
+            const [newExcludeKeyword, setNewExcludeKeyword] = useState('');
+            const [isSearching, setIsSearching] = useState(false);
+            const [searchResults, setSearchResults] = useState(null);
+            const [error, setError] = useState(null);
+            const [defaultConfig, setDefaultConfig] = useState(null);
+            
+            // Ielādē noklusējuma konfigurāciju
+            useEffect(() => {
+                fetch(`${API_BASE}/api/config`)
+                    .then(res => res.json())
+                    .then(data => setDefaultConfig(data))
+                    .catch(err => console.error('Kļūda ielādējot konfigurāciju:', err));
+            }, []);
+            
+            const handleAddKeyword = (keyword) => {
+                if (keyword && !keywords.includes(keyword)) {
+                    setKeywords([...keywords, keyword]);
+                    setNewKeyword('');
+                }
+            };
+            
+            const handleAddCpvCode = (code) => {
+                if (code && !cpvCodes.includes(code)) {
+                    setCpvCodes([...cpvCodes, code]);
+                    setNewCpvCode('');
+                }
+            };
+            
+            const handleAddExcludeKeyword = (keyword) => {
+                if (keyword && !excludeKeywords.includes(keyword)) {
+                    setExcludeKeywords([...excludeKeywords, keyword]);
+                    setNewExcludeKeyword('');
+                }
+            };
+            
+            const handleSearch = async () => {
+                setIsSearching(true);
+                setError(null);
+                setSearchResults(null);
+                
+                const searchData = {
+                    start_date: startDate,
+                    end_date: endDate,
+                    keywords: keywords,
+                    cpv_codes: cpvCodes,
+                    exclude_keywords: excludeKeywords
+                };
+                
+                try {
+                    const response = await fetch(`${API_BASE}/api/search`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(searchData)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        setSearchResults(data);
+                    } else {
+                        setError(data.error || 'Meklēšanas kļūda');
+                    }
+                } catch (err) {
+                    setError('Nevar savienoties ar serveri: ' + err.message);
+                } finally {
+                    setIsSearching(false);
+                }
+            };
+            
+            const downloadConfig = () => {
+                const config = {
+                    search_criteria: {
+                        keywords: keywords,
+                        cpv_codes: cpvCodes,
+                        exclude_keywords: excludeKeywords
+                    },
+                    start_date: startDate,
+                    end_date: endDate,
+                    days_to_check: Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) + 1
+                };
+                
+                const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'search_config.json';
+                a.click();
+            };
+            
+            return (
+                <div className="min-h-screen bg-gray-50 py-8">
+                    <div className="max-w-6xl mx-auto px-4">
+                        {/* Header */}
+                        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+                            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                                📊 Iepirkumu meklētājs
+                            </h1>
+                            <p className="text-gray-600">Meklējiet publiskos iepirkumus pēc atslēgvārdiem un CPV kodiem</p>
+                        </div>
+                        
+                        {/* Error message */}
+                        {error && (
+                            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                                <strong>Kļūda:</strong> {error}
+                            </div>
+                        )}
+                        
+                        {/* Date selection */}
+                        <div className="bg-white rounded-lg shadow p-6 mb-6">
+                            <h2 className="text-xl font-semibold mb-4">📅 Datumu diapazons</h2>
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">No datuma</label>
+                                    <input
+                                        type="date"
+                                        value={startDate}
+                                        onChange={(e) => setStartDate(e.target.value)}
+                                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Līdz datumam</label>
+                                    <input
+                                        type="date"
+                                        value={endDate}
+                                        onChange={(e) => setEndDate(e.target.value)}
+                                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Keywords */}
+                        <div className="bg-white rounded-lg shadow p-6 mb-6">
+                            <h2 className="text-xl font-semibold mb-4">🔍 Meklēšanas atslēgvārdi</h2>
+                            <div className="space-y-4">
+                                <div className="flex flex-wrap gap-2">
+                                    {keywords.map((keyword, index) => (
+                                        <span key={index} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center gap-2">
+                                            {keyword}
+                                            <button
+                                                onClick={() => setKeywords(keywords.filter((_, i) => i !== index))}
+                                                className="text-blue-600 hover:text-blue-800"
+                                            >
+                                                ✕
+                                            </button>
+                                        </span>
+                                    ))}
+                                </div>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        value={newKeyword}
+                                        onChange={(e) => setNewKeyword(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && handleAddKeyword(newKeyword)}
+                                        placeholder="Pievienot atslēgvārdu..."
+                                        className="flex-1 p-2 border border-gray-300 rounded-lg"
+                                    />
+                                    <button
+                                        onClick={() => handleAddKeyword(newKeyword)}
+                                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                                    >
+                                        ➕ Pievienot
+                                    </button>
+                                </div>
+                                {defaultConfig?.suggested_keywords && (
+                                    <div className="text-sm text-gray-600">
+                                        <span className="font-medium">Ieteikumi:</span>
+                                        <div className="flex flex-wrap gap-2 mt-2">
+                                            {defaultConfig.suggested_keywords.map((keyword) => (
+                                                <button
+                                                    key={keyword}
+                                                    onClick={() => handleAddKeyword(keyword)}
+                                                    className="text-blue-600 hover:text-blue-800 underline"
+                                                >
+                                                    {keyword}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        
+                        {/* CPV codes */}
+                        <div className="bg-white rounded-lg shadow p-6 mb-6">
+                            <h2 className="text-xl font-semibold mb-4"># CPV kodi (neobligāti)</h2>
+                            <div className="space-y-4">
+                                <div className="flex flex-wrap gap-2">
+                                    {cpvCodes.map((code, index) => (
+                                        <span key={index} className="bg-green-100 text-green-800 px-3 py-1 rounded-full flex items-center gap-2">
+                                            {code}
+                                            <button
+                                                onClick={() => setCpvCodes(cpvCodes.filter((_, i) => i !== index))}
+                                                className="text-green-600 hover:text-green-800"
+                                            >
+                                                ✕
+                                            </button>
+                                        </span>
+                                    ))}
+                                </div>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        value={newCpvCode}
+                                        onChange={(e) => setNewCpvCode(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && handleAddCpvCode(newCpvCode)}
+                                        placeholder="Pievienot CPV kodu..."
+                                        className="flex-1 p-2 border border-gray-300 rounded-lg"
+                                    />
+                                    <button
+                                        onClick={() => handleAddCpvCode(newCpvCode)}
+                                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+                                    >
+                                        ➕ Pievienot
+                                    </button>
+                                </div>
+                                {defaultConfig?.common_cpv_codes && (
+                                    <div className="grid md:grid-cols-2 gap-2 text-sm">
+                                        {defaultConfig.common_cpv_codes.map((cpv) => (
+                                            <button
+                                                key={cpv.code}
+                                                onClick={() => handleAddCpvCode(cpv.code)}
+                                                className="text-left p-2 hover:bg-gray-50 rounded"
+                                            >
+                                                <span className="font-medium">{cpv.code}</span> - {cpv.name}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        
+                        {/* Excluded keywords */}
+                        <div className="bg-white rounded-lg shadow p-6 mb-6">
+                            <h2 className="text-xl font-semibold mb-4">❌ Izslēgtie vārdi</h2>
+                            <div className="space-y-4">
+                                <div className="flex flex-wrap gap-2">
+                                    {excludeKeywords.map((keyword, index) => (
+                                        <span key={index} className="bg-red-100 text-red-800 px-3 py-1 rounded-full flex items-center gap-2">
+                                            {keyword}
+                                            <button
+                                                onClick={() => setExcludeKeywords(excludeKeywords.filter((_, i) => i !== index))}
+                                                className="text-red-600 hover:text-red-800"
+                                            >
+                                                ✕
+                                            </button>
+                                        </span>
+                                    ))}
+                                </div>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        value={newExcludeKeyword}
+                                        onChange={(e) => setNewExcludeKeyword(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && handleAddExcludeKeyword(newExcludeKeyword)}
+                                        placeholder="Pievienot izslēgto vārdu..."
+                                        className="flex-1 p-2 border border-gray-300 rounded-lg"
+                                    />
+                                    <button
+                                        onClick={() => handleAddExcludeKeyword(newExcludeKeyword)}
+                                        className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+                                    >
+                                        ➕ Pievienot
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Search buttons */}
+                        <div className="flex gap-4 mb-8">
+                            <button
+                                onClick={handleSearch}
+                                disabled={isSearching || keywords.length === 0}
+                                className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-lg font-semibold"
+                            >
+                                {isSearching ? '⏳ Meklē...' : '🔍 Meklēt iepirkumus'}
+                            </button>
+                            <button
+                                onClick={downloadConfig}
+                                className="bg-gray-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700"
+                            >
+                                💾 Lejupielādēt konfigurāciju
+                            </button>
+                        </div>
+                        
+                        {/* Results */}
+                        {searchResults && (
+                            <div className="bg-white rounded-lg shadow p-6">
+                                <h2 className="text-xl font-semibold mb-4">
+                                    {searchResults.totalFound > 0 
+                                        ? `✅ Atrasti ${searchResults.totalFound} rezultāti`
+                                        : '❌ Nav atrasti rezultāti'}
+                                </h2>
+                                {searchResults.totalFound > 0 && (
+                                    <div className="space-y-4">
+                                        {searchResults.results.map((result) => (
+                                            <div key={result.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md">
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <h3 className="text-lg font-semibold text-blue-600">{result.title}</h3>
+                                                    <span className="text-sm text-gray-500">{result.date}</span>
+                                                </div>
+                                                <p className="text-gray-700 mb-2">{result.authority}</p>
+                                                <div className="flex flex-wrap gap-4 text-sm">
+                                                    <span>📦 CPV: {result.cpvCodes.join(', ')}</span>
+                                                    <span className="font-semibold text-green-600">💰 {result.value}</span>
+                                                    <span className="text-red-600">⏰ Termiņš: {result.deadline}</span>
+                                                </div>
+                                                <div className="mt-2">
+                                                    <span className="text-sm text-gray-600">Atrasti vārdi: </span>
+                                                    {result.matchedKeywords.map((kw, i) => (
+                                                        <span key={i} className="text-sm bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded ml-1">
+                                                            {kw}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                                <div className="text-xs text-gray-400 mt-1">
+                                                    📄 {result.archive} → {result.file}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+        
+        ReactDOM.render(<ProcurementSearchUI />, document.getElementById('root'));
+    </script>
+</body>
+</html>

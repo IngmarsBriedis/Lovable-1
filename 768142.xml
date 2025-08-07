@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><document>
+<id>768142</id>
+<source_notice>766984</source_notice>
+<status>1</status>
+<creation_date>01/07/2025</creation_date>
+<creation_date_stamp>1751374554</creation_date_stamp>
+<general>
+<procurement_code>LDZ 2025/39-SPAV</procurement_code>
+<procurement_id>LDZ 2025/39-SPAV</procurement_id>
+<main_cpv>
+<code>31400000-0</code>
+<code_num>31400000</code_num>
+<type>1</type></main_cpv>
+<name>Akumulatoru piegāde</name>
+<procurement_type>2</procurement_type>
+<authority_id>94804</authority_id></general>
+<divided_in_parts></divided_in_parts>
+<contract_name>Akumulatoru piegāde</contract_name>
+<description></description>
+<send_oj>0</send_oj>
+<use_old_price_range>0</use_old_price_range>
+<region>1</region>
+<eu_fund>0</eu_fund>
+<contract_expects></contract_expects>
+<approval_date_stamp>1751374624</approval_date_stamp>
+<administrative_info>
+<publication_list>
+<publication>
+<pub_date>21/03/2025</pub_date>
+<pub_type>12</pub_type></publication></publication_list></administrative_info>
+<notice_cpv_type>products</notice_cpv_type>
+<contactplaces>
+<contactplace>
+<type>Galvenais kontaktpunkts</type>
+<name>VAS &quot;Latvijas dzelzceļš&quot;</name>
+<short_name>LDZ</short_name>
+<reg_num></reg_num>
+<address></address>
+<city></city>
+<zip_code></zip_code>
+<country></country>
+<region></region>
+<place>Iepirkumu birojs</place>
+<person>Inga Zilberga</person>
+<phone>67234932</phone>
+<fax></fax>
+<email>inga.zilberga@ldz.lv</email>
+<url>https://www.ldz.lv/</url>
+<url_client>https://www.ldz.lv/lv/iepirkumi</url_client>
+<procurement_doc_url></procurement_doc_url>
+<tender_submit_url></tender_submit_url>
+<has_url></has_url>
+<has_url3></has_url3>
+<has_url4></has_url4>
+<direct_procurement_doc_url></direct_procurement_doc_url>
+<limited_procurement_doc_url></limited_procurement_doc_url>
+<tender_full_url></tender_full_url>
+<full_public_url></full_public_url></contactplace></contactplaces>
+<has_url4></has_url4>
+<has_url></has_url>
+<authority_name>Valsts akciju sabiedrība &quot;Latvijas dzelzceļš&quot;</authority_name>
+<address>Emīlijas Benjamiņas iela 3</address>
+<authority_reg_num>40003032065</authority_reg_num>
+<zip_code>LV-1547</zip_code>
+<city>Rīga</city>
+<country>1</country>
+<authority_id>94804</authority_id>
+<eu_list></eu_list>
+<decision_date>16/06/2025</decision_date>
+<price>4790.4</price>
+<currency>2</currency>
+<price_exact_lvl></price_exact_lvl>
+<suspension_reason></suspension_reason>
+<sps_iv_interrupted>0</sps_iv_interrupted>
+<winner_list>
+<winner>
+<winner_name>SIA &quot;Lemona Latvija&quot;</winner_name>
+<winner_reg_num>40003952958</winner_reg_num>
+<winner_address>Krasta iela 105, Rīga, LV-1019</winner_address>
+<winner_country>1</winner_country></winner></winner_list>
+<price_exact_eur>0</price_exact_eur>
+<qualification></qualification>
+<notes></notes>
+<type>sps_iv_results</type>
+<has_complaint>0</has_complaint>
+<complaint_id></complaint_id>
+<approval_date>01/07/2025</approval_date>
+<publication_date>01/07/2025</publication_date>
+<publication_date_stamp>1751374624</publication_date_stamp>
+<sync_version_eforms>4</sync_version_eforms>
+<populate_iub_winners>3</populate_iub_winners>
+<contract_register_import>1</contract_register_import>
+<archived>1</archived></document>
